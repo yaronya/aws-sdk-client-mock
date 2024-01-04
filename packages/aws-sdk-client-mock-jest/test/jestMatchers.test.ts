@@ -273,3 +273,23 @@ Calls:
 `);
     });
 });
+
+describe('toHaveReceivedAnyCommand', () => {
+    it.each`
+    command
+    ${publishCmd1}
+    ${subscribeCmd1}
+    `('passes on receiving any command', async ({ command }) => {
+        const sns = new SNSClient({});
+        await sns.send(command);
+
+        expect(() => expect(snsMock).toHaveReceivedAnyCommand()).not.toThrow();
+    })
+
+    it('fails on not receiving any command', () => {
+        expect(() => expect(snsMock).toHaveReceivedAnyCommand()).toThrowErrorMatchingInlineSnapshot(`
+"Expected SNSClient to receive any command
+SNSClient received any command <red>0</color> times"
+`);
+    });
+})
